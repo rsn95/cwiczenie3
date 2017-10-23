@@ -45,21 +45,22 @@ struct Probka
 double t;
 double x;
 };
-Probka probka1 = {};
-
-
+Probka probka1 = {0.1, 0.2};
 
 
 
 vector<Probka> dane;
+Probka probka1(0.1, 0.2);
+dane.push_back(probka1);
+cout << dane[0.1].first << ", "  << dane[0.2].second;
 
-Probka probka1{};
-dane.push_back(Probka);
-dane.push_back(probka1(0.2, 0.3));
-cout << dane[0].first << ", " << dane[0].second;
-plik.close();
+
+for (int i = 0; i < wektor.size(); ++i)
+{
+cout << wektor[i] << endl;
 }
 
+}
 
 
 

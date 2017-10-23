@@ -1,0 +1,26 @@
+# depslib dependency file v1.0
+1508757847 source:d:\rj\cwiczenie4\main.cpp
+	<iostream>
+	<fstream>
+	<sstream>
+	<stdexcept>
+	<iostream>
+	<vector>
+
+1508757137 source:d:\rj\cwiczenie4\probka.cpp
+	"probka.hpp"
+
+1508756173 source:d:\rj\cwiczenie4\analizatorsygnalu.cpp
+
+1508756111 source:d:\rj\cwiczenie4\sygnal.cpp
+
+1508756156 source:d:\rj\cwiczenie4\sygnalloader.cpp
+
+1508757851 d:\rj\cwiczenie4\probka.hpp
+	<iostream>
+	<fstream>
+	<sstream>
+	<stdexcept>
+	<iostream>
+	<vector>
+
