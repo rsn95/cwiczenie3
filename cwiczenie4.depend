@@ -24,3 +24,11 @@
 	<iostream>
 	<vector>
 
+1510573391 source:d:\rj\cwiczenie 3\cwiczenie3\main.cpp
+	<stdexcept>
+	<iostream>
+	<string>
+	<fstream>
+	<sstream>
+	<vector>
+

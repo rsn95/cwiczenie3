@@ -1,5 +1,5 @@
-
-#define PROBKA_HPP
+#infdef probka_hpp
+#define probka_hpp
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -9,14 +9,9 @@
 
 using namespace std;
 
-class probka
-{
-public:
-    double t;
-    double x;
-    probka();
-    probka(double t1, double x1);
+Probka::Probka(void);
+Probka::Probka(double x, double t);
 
-};
+#endif
 
 

@@ -1,127 +1,208 @@
+#include <stdexcept>
 #include <iostream>
 #include <string>
 #include <fstream>
 #include <sstream>
 #include <vector>
-#include <stdexcept>
 
 using namespace std;
 
-struct Probka {
+/*struct Probka {
 	double t;
 	double x;
+};*/
+
+class Probka {
+private:
+	double t, x;
+public:
+	Probka(void);
+	Probka(double x, double t);
+
+	double getX() {
+		return this->x;
+	}
+
+	double getT() {
+		return this->t;
+	}
 };
 
-vector<Probka> wczytaj(string nazwa) {
+Probka::Probka(void) {
+	x = 0;
+	t = 0;
+}
+
+Probka::Probka(double x, double t) {
+	this->x = x;
+	this->t = t;
+}
+
+
+class Sygnal{
+private:
 	vector<Probka> dane;
-	ifstream plik("sygnal.csv");
-	string linia;
-	while (getline(plik, linia))
-	{
-		stringstream ss(linia);
-		double x1, x2;
-		ss >> x1;
-		ss.ignore();
-		ss >> x2;
-		Probka probka = { x1,x2 };
-		dane.push_back(probka);
-	}
-	dane.erase(dane.begin());
-	plik.close();
-	return dane;
-}
+public:
+	Sygnal(void);
+	Sygnal(vector<Probka> dane);
 
-void wypisz(vector<Probka> dane) {
-	for (int i = 0; i < dane.size(); i++)
-		cout << dane[i].t << " " << dane[i].x << endl;
-}
 
-void zapisz(string nazwa , vector<Probka> dane) {
-	ofstream plik(nazwa);
-	plik << "t,x\n";
-	for (int i = 0; i < dane.size(); i++) {
-		plik << dane[i].t << "," << dane[i].x << "\n";
+
+	vector<Probka> getDane() {
+		return this->dane;
 	}
 
-	plik.close();
+	friend class AnalizatorSygnalu;
+	friend class SygnalLoader;
+};
+
+Sygnal::Sygnal(void) {
+
 }
 
-double obliczDlugosc(vector<Probka> dane) {
-	double t1, t2;
-	t1 = dane[0].t;
-	t2 = dane[0].t;
-	for (int i = 0; i < dane.size(); i++) {
-		if (dane[i].t < t1)
-			t1 = dane[i].t;
-		if (dane[i].t > t2)
-			t2 = dane[i].t;
+Sygnal::Sygnal(vector<Probka> dane) {
+	this->dane = dane;
+}
+
+class SygnalLoader {
+
+public:
+	SygnalLoader(void);
+
+	vector<Probka> wczytaj(string nazwa) {
+		vector<Probka> dane;
+		ifstream plik("sygnal.csv");
+		string linia;
+		while (getline(plik, linia))
+		{
+			stringstream ss(linia);
+			double x1, x2;
+			ss >> x1;
+			ss.ignore();
+			ss >> x2;
+			Probka probka(x2, x1);
+			dane.push_back(probka);
+		}
+		dane.erase(dane.begin());
+		plik.close();
+		return dane;
 	}
-	return t2 - t1;
-}
 
-double obliczMin(vector<Probka> dane) {
-	double min = dane[0].x;
-	for (int i = 0; i < dane.size(); i++) {
-		if (dane[i].x < min)
-			min = dane[i].x;
+	void zapisz(string nazwa, Sygnal & s) {
+		ofstream plik("sygnal.csv");
+		plik << "t,x\n";
+		for (int i = 0; i < s.dane.size(); i++) {
+			plik << s.dane[i].getT() << "," << s.dane[i].getX() << "\n";
+		}
+
+		plik.close();
 	}
-	return min;
+
+};
+
+SygnalLoader::SygnalLoader(void) {
+
 }
 
-double obliczMax(vector<Probka> dane) {
-	double max = dane[0].x;
-	for (int i = 0; i < dane.size(); i++) {
-		if (dane[i].x > max)
-			max = dane[i].x;
+class AnalizatorSygnalu {
+
+public:
+
+	AnalizatorSygnalu(void);
+
+	double obliczDlugosc(Sygnal & s) {
+		double t1, t2;
+		t1 = s.dane[0].getT();
+		t2 = s.dane[0].getT();
+		for (int i = 0; i < s.dane.size(); i++) {
+			if (s.dane[i].getT() < t1)
+				t1 = s.dane[i].getT();
+			if (s.dane[i].getT() > t2)
+				t2 = s.dane[i].getT();
+		}
+		return t2 - t1;
 	}
-	return max;
-}
 
-double obliczSrednia(vector<Probka> dane) {
-	double sr = 0;
-	for (int i = 0; i < dane.size(); i++)
-		sr += dane[i].x;
-	sr = sr / dane.size();
-	return sr;
-}
+	void wypisz(Sygnal & s) {
 
-double calkuj(vector<Probka> dane) {
-	double calka = 0;
-	for (int i = 0; i < dane.size() - 1; i++) {
-		double dt = dane[i + 1].t - dane[i].t;
-		double dpole = dane[i].x + dane[i + 1].x;
-		dpole = dpole * dt / 2;
-		calka += dpole;
+		for (int i = 0; i < s.dane.size(); i++)
+			cout << s.dane[i].getT() << " " << s.dane[i].getX() << endl;
 	}
-	return calka;
+
+
+
+	double obliczMin(Sygnal & s) {
+		double min = s.dane[0].getX();
+		for (int i = 0; i < s.dane.size(); i++) {
+			if (s.dane[i].getX() < min)
+				min = s.dane[i].getX();
+		}
+		return min;
+	}
+
+	double obliczMax(Sygnal & s) {
+		double max = s.dane[0].getX();
+		for (int i = 0; i < s.dane.size(); i++) {
+			if (s.dane[i].getX() > max)
+				max = s.dane[i].getX();
+		}
+		return max;
+	}
+
+	double obliczSrednia(Sygnal & s) {
+		double sr = 0;
+		for (int i = 0; i < s.dane.size(); i++)
+			sr += s.dane[i].getX();
+		sr = sr / s.dane.size();
+		return sr;
+	}
+
+	double calkuj(Sygnal & s) {
+		double calka = 0;
+		for (int i = 0; i < s.dane.size() - 1; i++) {
+			double dt = s.dane[i + 1].getT() - s.dane[i].getT();
+			double dpole = s.dane[i].getX() + s.dane[i + 1].getX();
+			dpole = dpole * dt / 2;
+			calka += dpole;
+		}
+		return calka;
+	}
+};
+
+AnalizatorSygnalu::AnalizatorSygnalu() {
+
 }
+
+
 
 int main(int argc, char* argv[])
 {
-	if (argc != 2)
-    {
+	if (argc != 2) {
 		throw runtime_error("sygnal.csv");
-        return -1;
 	}
-    cout << argv[1] << endl;
-	string sygnal = argv[1];
-	cout << "Odczytuje plik : " << sygnal << endl;
 
-	vector<Probka> dane = wczytaj(sygnal);
+	string nazwa_pliku = argv[1];
+	cout << "Odczytuje plik : " << nazwa_pliku << endl;
 
-	wypisz(dane);
+	SygnalLoader sl;
 
-	zapisz("out.csv", dane);
+	AnalizatorSygnalu al;
 
-	cout << "Dlugosc probki: " << obliczDlugosc(dane) << endl;
+	Sygnal s(sl.wczytaj(nazwa_pliku));
 
-	cout << "Wartosc min: " << obliczMin(dane) << endl;
+	al.wypisz(s);
 
-	cout << "Wartosc max: " << obliczMax(dane) << endl;
+	sl.zapisz("out.csv", s);
 
-	cout << "Wartosc srednia: " << obliczSrednia(dane) << endl;
+	cout << "Dlugosc probki: " << al.obliczDlugosc(s) << endl;
 
-	cout << "Calka sygnalu: " << calkuj(dane) << endl;
+	cout << "Wartosc min: " << al.obliczMin(s) << endl;
 
-    return 0;
+	cout << "Wartosc max: " << al.obliczMax(s) << endl;
+
+	cout << "Wartosc srednia: " << al.obliczSrednia(s) << endl;
+
+	cout << "Calka sygnalu: " << al.calkuj(s) << endl;
+
+	return 0;
 }
